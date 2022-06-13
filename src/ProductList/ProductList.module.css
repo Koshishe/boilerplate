@@ -1,0 +1,19 @@
+.list {
+  margin: 0 auto;
+  max-width: 763px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.subPrice {
+  color: #323c48;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 24px;
+  padding-left: 8px;
+}
+
+.starFilled {
+  fill: #323c48;
+}
