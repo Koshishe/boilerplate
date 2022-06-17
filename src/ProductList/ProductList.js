@@ -25,6 +25,14 @@ const subPriceComponent = (content) => {
 };
 
 export function ProductList({products}) {
+  const parsePrice = (price) => {
+    const priceStr = String(price)
+    if (priceStr.length > 3) {
+      return `${priceStr.slice(0, priceStr.length - 3)} ${priceStr.slice(priceStr.length - 3, priceStr.length)} ₽`
+    } else {
+      return `${price} ₽`
+    }
+  }
   return (
     <ul className={styles.list}>
       {products.map((item) =>
@@ -33,7 +41,7 @@ export function ProductList({products}) {
           isInStock={item.isInStock}
           img={item.img}
           title={item.title}
-          price={item.price}
+          price={parsePrice(item.price)}
           subPriceContent={subPriceComponent(item.subPriceContent)}
           maxRating={item.maxRating}
           rating={item.rating}

@@ -1,15 +1,30 @@
 import products from './products.json'
-import React from 'react'
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import './index.css'
+import styles from './index.module.css'
 import { Title } from './Title/Title';
 import { ProductList } from './ProductList/ProductList';
+import { Filter } from './Filter/Filter';
 
 function App() {
+  const [productsList, setProductsList] = useState(products)
+
+  const getPrice = (min) => {
+    const prices = products.map((item) => Number(item.price))
+    return min ? Math.min(...prices) : Math.max(...prices)
+  }
+
+  const filterProducts = (minPrice, maxPrice) => {
+    setProductsList(products.filter((item) => {
+      return item.price >= minPrice && item.price <= maxPrice
+    }))
+  }
+
   return (
-    <div className="App">
+    <div className={styles.wrapper}>
       <Title title="Список товаров" />
-      <ProductList products={products} />
+      <Filter getPrice={getPrice} filterProducts={filterProducts} />
+      <ProductList products={productsList} />
     </div>
   )
 }
