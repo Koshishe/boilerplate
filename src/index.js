@@ -14,9 +14,9 @@ function App() {
     return min ? Math.min(...prices) : Math.max(...prices)
   }
 
-  const filterProducts = (minPrice, maxPrice) => {
+  const filterProducts = (minPrice, maxPrice, discount) => {
     setProductsList(products.filter((item) => {
-      return item.price >= minPrice && item.price <= maxPrice
+      return item.price >= minPrice && item.price <= maxPrice && item.discount >= discount
     }))
   }
 

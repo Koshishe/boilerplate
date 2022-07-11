@@ -9,6 +9,10 @@
   margin-bottom: 56px;
 }
 
+.goods:not(:nth-child(3n)) {
+  margin-right: 44px;
+}
+
 .goodsNone {
   color: #7e8fa4;
 }

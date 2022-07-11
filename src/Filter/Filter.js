@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react';
 import styles from './Filter.module.css'
+import Discount from '../Discount/Discount';
 
 export function Filter({getPrice, filterProducts}) {
   const [minValue, setMinValue] = useState(getPrice(true))
   const [maxValue, setMaxValue] = useState(getPrice(false))
+  const [discount, setDiscount] = useState(0)
   const minRef = useRef()
   const maxRef = useRef()
 
@@ -17,11 +19,16 @@ export function Filter({getPrice, filterProducts}) {
 
   const handleClick = (e) => {
     e.preventDefault()
-    filterProducts(minValue, maxValue)
+    filterProducts(minValue, maxValue, discount)
+  }
+
+  const handleChangeDiscount = (event) => {
+    setDiscount(event.target.value)
+    filterProducts(minValue, maxValue, event.target.value)
   }
 
   return (
-    <div>
+    <div className={styles.filterWrapper}>
       <div className={styles.title}>Цена</div>
       <form className={styles.form}>
         <div className={styles.formWrapper}>
@@ -52,6 +59,7 @@ export function Filter({getPrice, filterProducts}) {
         </div>
         <button className={styles.button} onClick={handleClick}>Применить</button>
       </form>
+      <Discount title='Скидка' name="discount" value={discount} onChange={handleChangeDiscount} />
     </div>
   )
 }

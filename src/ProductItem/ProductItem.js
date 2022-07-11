@@ -29,8 +29,8 @@ function ProductItem({ isInStock, img, title, price, subPriceContent, maxRating,
         {price}{subPriceContent}
       </div>
     </li>
-  );
-};
+  )
+}
 
 ProductItem.propTypes = {
   title: pt.node.isRequired,
@@ -40,7 +40,8 @@ ProductItem.propTypes = {
   maxRating: pt.number.isRequired,
   subPriceContent: pt.node.isRequired,
   ratingComponent: pt.func.isRequired,
-  isInStock: pt.bool.isRequired
+  isInStock: pt.bool.isRequired,
+  discount: pt.number
 };
 
 export default ProductItem;
