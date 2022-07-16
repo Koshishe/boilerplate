@@ -46,6 +46,8 @@ export function ProductList({products}) {
           maxRating={item.maxRating}
           rating={item.rating}
           ratingComponent={ratingComponent}
+          discount={item.discount}
+          category={item.category}
         />
       )}
     </ul>

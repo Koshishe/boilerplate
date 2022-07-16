@@ -1,0 +1,44 @@
+.categories {
+  margin-top: 24px;
+}
+
+.title {
+  font-size: 20px;
+  line-height: 28px;
+  color: #323c48;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.categoryCheck {
+  display: none;
+}
+
+.categoryLabel {
+  padding: 8px 16px;
+  border: 1px solid #7e8fa4;
+  border-radius: 15px;
+  color: #7e8fa4;
+  font-size: 14px;
+  line-height: 14px;
+  margin-right: 16px;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.categoryLabel:hover {
+  background-color: #7e8fa4;
+  color: #fff;
+}
+
+.categoryLabel.isActve {
+  background: #323c48;
+  color: #fff;
+}

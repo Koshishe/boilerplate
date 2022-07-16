@@ -5,7 +5,19 @@ import s from './ProductItem.module.css';
 
 const range = to => [...Array(to).keys()].map(i => i + 1)
 
-function ProductItem({ isInStock, img, title, price, subPriceContent, maxRating, rating, ratingComponent }) {
+function ProductItem(
+  {
+    isInStock,
+    img,
+    title,
+    price,
+    subPriceContent,
+    maxRating,
+    rating,
+    ratingComponent,
+    discount,
+    category
+  }) {
   return (
     <li className={cx(s.goods, { [s.goodsNone]: !isInStock })}>
       <div className={cx(s.goodsType, { [s.goodsTypeNone]: !isInStock })}>
@@ -18,7 +30,18 @@ function ProductItem({ isInStock, img, title, price, subPriceContent, maxRating,
           height: '200px',
           backgroundImage: 'url(' + img + ')'
         }}
-      />
+      >
+        {Number(discount) > 0 && (
+          <div className={s.discount}>
+            {`${discount}%`}
+          </div>
+        )}
+      </div>
+      {category.length &&
+        <div className={s.categories}>
+          {category.map((item) => <div key={item} className={s.category}>{item}</div>)}
+        </div>
+      }
       <div className={s.goodsName}>{title}</div>
       <div>
         {
@@ -41,7 +64,8 @@ ProductItem.propTypes = {
   subPriceContent: pt.node.isRequired,
   ratingComponent: pt.func.isRequired,
   isInStock: pt.bool.isRequired,
-  discount: pt.number
+  discount: pt.number,
+  category: pt.string
 };
 
 export default ProductItem;

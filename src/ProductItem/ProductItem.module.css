@@ -32,12 +32,26 @@
   padding-left: 12px;
 }
 
+.discount {
+  background-color: #41ce7f;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  padding: 10px;
+  text-align: center;
+}
+
 .goodsTypeNone {
   background-color: #f5f6fa;
   color: #7e8fa4;
 }
 
 .goodsImg {
+  position: relative;
   box-shadow: 0 4px 8px 0 rgba(50, 60, 72, 0.1);
   background-position: center;
   background-size: cover;
@@ -47,10 +61,30 @@
   opacity: 0.5;
 }
 
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.category {
+  margin-top: 15px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #7e8fa4;
+  text-transform: capitalize;
+  padding: 2px 6px;
+  border: 1px solid #7e8fa4;
+  border-radius: 15px;
+  margin-bottom: 5px;
+}
+
+.category:not(:first-child) {
+  margin-left: 5px;
+}
+
 .goodsName {
   font-size: 16px;
   line-height: 1.5;
-  margin-top: 15px;
   margin-bottom: 8px;
 }
 

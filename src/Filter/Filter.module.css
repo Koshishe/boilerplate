@@ -1,13 +1,16 @@
+.filterWrapper {
+  position: sticky;
+  max-width: 256px;
+  top: 10px;
+  transform: translateX(-10%);
+}
+
 .title {
   font-size: 20px;
   line-height: 28px;
   color: #323c48;
   margin-bottom: 16px;
-}
-
-.filterWrapper {
-  max-width: 256px;
-  margin-bottom: 56px;
+  font-weight: bold;
 }
 
 .form {

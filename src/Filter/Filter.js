@@ -1,31 +1,49 @@
-import React, { useRef, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Filter.module.css'
 import Discount from '../Discount/Discount';
+import { Input } from '../UI/Input/Input';
+import { Categories } from '../Categories/Categories';
+import pt from 'prop-types';
 
-export function Filter({getPrice, filterProducts}) {
+export function Filter({getPrice, filterProducts, getCategories}) {
   const [minValue, setMinValue] = useState(getPrice(true))
   const [maxValue, setMaxValue] = useState(getPrice(false))
   const [discount, setDiscount] = useState(0)
-  const minRef = useRef()
-  const maxRef = useRef()
+  const [activeCategories, setActiveCategories] = useState([])
 
-  const handleChangeMinValue = () => {
-    minRef.current.value < 0 ? setMinValue(0) : setMinValue(minRef.current.value)
+  const toggleCategory = (category) => {
+    if (activeCategories.indexOf(category) !== -1) {
+      const newCategories = activeCategories.filter((item) => item !== category)
+      setActiveCategories(newCategories)
+      updateURL(newCategories.length ? newCategories.join(',') : '')
+    } else {
+      const newCategories = [...activeCategories, category]
+      setActiveCategories([...activeCategories, category])
+      updateURL(`${newCategories.join(',')}`)
+    }
   }
 
-  const handleChangeMaxValue = () => {
-    maxRef.current.value < 0 ? setMaxValue(0) : setMaxValue(maxRef.current.value)
+  const  updateURL = (filter) => {
+    if (window.history.pushState) {
+      const baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname
+      const newUrl = `${baseUrl}${filter && `?filter=${filter}`}`
+      window.history.pushState(null, null, newUrl)
+    }
+    else {
+      console.warn('History API не поддерживается')
+    }
   }
 
-  const handleClick = (e) => {
-    e.preventDefault()
-    filterProducts(minValue, maxValue, discount)
-  }
+  useEffect(() => {
+    const urlCategories = window.location.search.replace('?filter=', '').split(',')
+    if (urlCategories[0]) {
+      setActiveCategories(urlCategories)
+    }
+  }, [])
 
-  const handleChangeDiscount = (event) => {
-    setDiscount(event.target.value)
-    filterProducts(minValue, maxValue, event.target.value)
-  }
+  useEffect(() => {
+    filterProducts(minValue, maxValue, discount, activeCategories)
+  }, [minValue, maxValue, discount, activeCategories, filterProducts])
 
   return (
     <div className={styles.filterWrapper}>
@@ -33,33 +51,38 @@ export function Filter({getPrice, filterProducts}) {
       <form className={styles.form}>
         <div className={styles.formWrapper}>
           <div className={styles.formItem}>
-            <label htmlFor="from" className={styles.label}>от</label>
-            <input
-              ref={minRef}
-              type="number"
-              id="from"
-              className={styles.field}
-              defaultValue={minValue}
+            <Input
+              name={'from'}
+              type={'number'}
               value={minValue}
-              onChange={handleChangeMinValue}
+              onChange={setMinValue}
+              label={'от'}
             />
           </div>
           <div className={styles.formItem}>
-            <label htmlFor="to" className={styles.label}>до</label>
-            <input
-              ref={maxRef}
-              type="number"
-              id="to"
-              className={styles.field}
-              defaultValue={maxValue}
+            <Input
+              name={'to'}
+              type={'number'}
               value={maxValue}
-              onChange={handleChangeMaxValue}
+              onChange={setMaxValue}
+              label={'до'}
             />
           </div>
         </div>
-        <button className={styles.button} onClick={handleClick}>Применить</button>
       </form>
-      <Discount title='Скидка' name="discount" value={discount} onChange={handleChangeDiscount} />
+      <Discount
+        title='Скидка'
+        name="discount"
+        value={discount}
+        onChange={setDiscount}
+      />
+      <Categories items={getCategories()} activeCategories={activeCategories} toggleCategory={toggleCategory} />
     </div>
   )
 }
+
+Filter.propTypes = {
+  filterProducts: pt.number,
+  getPrice: pt.func,
+  getCategories: pt.func,
+};
