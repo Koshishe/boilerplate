@@ -1,7 +1,7 @@
 import React from 'react';
 import pt from 'prop-types';
 import styles from './Discount.module.css';
-import { Input } from '../UI/Input/Input';
+import { Input } from '../../UI/Input/Input';
 
 const Discount = ({ title, name, value, onChange }) => {
   return (

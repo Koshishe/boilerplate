@@ -2,9 +2,9 @@ import products from './products.json'
 import React  from 'react';
 import ReactDOM from 'react-dom';
 import styles from './index.module.css'
-import { Title } from './Title/Title';
-import { ProductList } from './ProductList/ProductList';
-import { Filter } from './Filter/Filter';
+import { Title } from './components/Title/Title';
+import { ProductList } from './components/ProductList/ProductList';
+import { Filter } from './components/Filter/Filter';
 import { Provider } from 'react-redux';
 import { store } from './store';
 

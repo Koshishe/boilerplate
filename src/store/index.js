@@ -14,9 +14,9 @@ export const initialState = {
   }
 }
 
-const reducer = combineReducers({
+const reducers = combineReducers({
   productsFiltered: productsReducer,
   filters: filtersReducer
 })
 
-export const store = createStore(reducer, initialState)
+export const store = createStore(reducers, initialState)

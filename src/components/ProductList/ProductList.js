@@ -1,7 +1,9 @@
 import ProductItem from '../ProductItem/ProductItem';
 import React from 'react';
 import styles from './ProductList.module.css'
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { parsePrice } from '../../utils/utils';
+import { productsFilteredSelector } from '../../store/selectors';
 
 const ratingComponent = ({ isFilled }) => {
   return (
@@ -25,21 +27,8 @@ const subPriceComponent = (content) => {
   return <span className={styles.subPrice}>{content}</span>;
 }
 
-const mapStateToProps = state => ({
-  productsFiltered: state.productsFiltered
-})
-
-export const ProductList = connect(mapStateToProps)((props) => {
-  const { productsFiltered } = props
-
-  const parsePrice = (price) => {
-    const priceStr = String(price)
-    if (priceStr.length > 3) {
-      return `${priceStr.slice(0, priceStr.length - 3)} ${priceStr.slice(priceStr.length - 3, priceStr.length)} ₽`
-    } else {
-      return `${price} ₽`
-    }
-  }
+export const ProductList = () => {
+  const productsFiltered = useSelector(productsFilteredSelector)
 
   return (
     <ul className={styles.list}>
@@ -60,4 +49,4 @@ export const ProductList = connect(mapStateToProps)((props) => {
       )}
     </ul>
   )
-})
+}

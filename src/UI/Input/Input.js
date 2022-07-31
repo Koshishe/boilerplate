@@ -11,9 +11,7 @@ export function Input({name, type, value, onChange, label, extText}) {
         id={name}
         className={styles.field}
         value={value}
-        onChange={(e) =>
-          onChange(e.target.value)
-        }
+        onChange={onChange}
       />
       {extText && <span className={styles.text}>{extText}</span>}
     </>

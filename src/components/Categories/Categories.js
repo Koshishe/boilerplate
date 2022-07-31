@@ -1,47 +1,28 @@
 import React, { useContext } from 'react';
 import styles from './Categories.module.css'
 import { CategoryCheckbox } from './CategoryCheckbox';
-import { addCategoryAction } from '../store/actions';
-import { connect } from 'react-redux';
+import { addCategoryAction } from '../../store/actions';
+import { useSelector, useDispatch } from 'react-redux';
 import { uniq } from 'lodash';
-import { ProductContext } from '../index';
+import { ProductContext } from '../../index';
+import { updateURL } from '../../utils/utils';
+import { categoriesSelector } from '../../store/selectors';
 
-const mapStateToProps = state => ({
-  filters: state.filters
-})
-
-const mapDispatchToProps = dispatch => {
-  return {
-    addCategory: (payload) => dispatch(addCategoryAction(payload)),
-  }
-}
-
-export const Categories = connect(mapStateToProps, mapDispatchToProps)((props) =>  {
+export const Categories = () =>  {
+  const dispatch = useDispatch()
   const { products } = useContext(ProductContext)
-  const { filters } = props
-  const { categories } = filters
+  const categories = useSelector(categoriesSelector)
 
   const allCategories = uniq(products.map((item) => item.category).flat())
-
-  const  updateURL = (filter) => {
-    if (window.history.pushState) {
-      const baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname
-      const newUrl = `${baseUrl}${filter && `?filter=${filter}`}`
-      window.history.pushState(null, null, newUrl)
-    }
-    else {
-      console.warn('History API не поддерживается')
-    }
-  }
 
   const toggleCategory = (category) => {
     if (categories.indexOf(category) !== -1) {
       const newCategories = categories.filter((item) => item !== category)
-      props.addCategory(newCategories)
+      dispatch(addCategoryAction(newCategories))
       updateURL(newCategories.length ? newCategories.join(',') : '')
     } else {
       const newCategories = [...categories, category]
-      props.addCategory([...categories, category])
+      dispatch(addCategoryAction([...categories, category]))
       updateURL(`${newCategories.join(',')}`)
     }
   }
@@ -61,4 +42,4 @@ export const Categories = connect(mapStateToProps, mapDispatchToProps)((props) =
       </div>
     </div>
   )
-})
+}

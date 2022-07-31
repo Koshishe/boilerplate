@@ -1,60 +1,54 @@
 import React, { useEffect, useContext } from 'react';
 import styles from './Filter.module.css'
 import Discount from '../Discount/Discount';
-import { Input } from '../UI/Input/Input';
+import { Input } from '../../UI/Input/Input';
 import { Categories } from '../Categories/Categories';
-import { ProductContext } from '../index';
-import { connect } from 'react-redux';
+import { ProductContext } from '../../index';
+import { useSelector, useDispatch } from 'react-redux';
 import {
-  addCategoryAction, addDiscountFilterAction, addMaxPriceFilterAction,
+  addCategoryAction,
+  addDiscountFilterAction,
+  addMaxPriceFilterAction,
   addMinPriceFilterAction,
   filterProductsAction
-} from '../store/actions';
+} from '../../store/actions';
+import {
+  categoriesSelector,
+  discountSelector,
+  pricesSelector
+} from '../../store/selectors';
 
-const mapStateToProps = state => ({
-  filters: state.filters
-})
-
-const mapDispatchToProps = dispatch => {
-  return {
-    filterProducts: (payload) => dispatch(filterProductsAction(payload)),
-    addCategory: (payload) => dispatch(addCategoryAction(payload)),
-    addMinPriceFilter: (payload) => dispatch(addMinPriceFilterAction(payload)),
-    addMaxPriceFilter: (payload) => dispatch(addMaxPriceFilterAction(payload)),
-    addDiscountFilter: (payload) => dispatch(addDiscountFilterAction(payload))
-  }
-}
-
-export const Filter = connect(mapStateToProps, mapDispatchToProps)((props) => {
+export const Filter = () => {
   const { products } = useContext(ProductContext)
-  const { filters } = props
-  const { categories, prices, discount } = filters
+  const dispatch = useDispatch()
 
-  const getPrice = (min) => {
-    const prices = products.map((item) => Number(item.price))
-    return min ? Math.min(...prices) : Math.max(...prices)
-  }
+  const categories = useSelector(categoriesSelector)
+  const prices = useSelector(pricesSelector)
+  const discount = useSelector(discountSelector)
+
+  const minPrice = Math.min(...products.map((item) => Number(item.price)))
+  const maxPrice = Math.max(...products.map((item) => Number(item.price)))
 
   useEffect(() => {
     const urlCategories = window.location.search.replace('?filter=', '').split(',')
     if (urlCategories[0]) {
-      props.addCategory(urlCategories)
+      dispatch(addCategoryAction(urlCategories))
     }
-  }, [props])
+  }, [dispatch])
 
   useEffect(() => {
-    props.addMinPriceFilter(getPrice(true))
-    props.addMaxPriceFilter(getPrice())
-  }, [getPrice, props])
+    dispatch(addMinPriceFilterAction(minPrice))
+    dispatch(addMaxPriceFilterAction(maxPrice))
+  }, [dispatch, maxPrice, minPrice])
 
   useEffect(() => {
-    props.filterProducts(products.filter((item) => {
+    dispatch(filterProductsAction(products.filter((item) => {
       return item.price >= prices.min &&
         item.price <= prices.max &&
         item.discount >= discount &&
         (categories.length ? item.category.filter((item) => categories.indexOf(item) !== -1).length : true)
-    }))
-  }, [prices.min, prices.max, discount, categories, props, products])
+    })))
+  }, [prices.min, prices.max, discount, categories, products, dispatch])
 
   return (
     <div className={styles.filterWrapper}>
@@ -66,7 +60,7 @@ export const Filter = connect(mapStateToProps, mapDispatchToProps)((props) => {
               name={'from'}
               type={'number'}
               value={prices.min}
-              onChange={props.addMinPriceFilter}
+              onChange={(e) => dispatch(addMinPriceFilterAction(e.target.value))}
               label={'от'}
             />
           </div>
@@ -75,7 +69,7 @@ export const Filter = connect(mapStateToProps, mapDispatchToProps)((props) => {
               name={'to'}
               type={'number'}
               value={prices.max}
-              onChange={props.addMaxPriceFilter}
+              onChange={(e) => dispatch(addMaxPriceFilterAction(e.target.value))}
               label={'до'}
             />
           </div>
@@ -85,9 +79,9 @@ export const Filter = connect(mapStateToProps, mapDispatchToProps)((props) => {
         title='Скидка'
         name="discount"
         value={discount}
-        onChange={props.addDiscountFilter}
+        onChange={(e) => dispatch(addDiscountFilterAction(e.target.value))}
       />
       <Categories />
     </div>
   )
-})
+}
