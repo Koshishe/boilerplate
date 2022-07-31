@@ -65,7 +65,7 @@ ProductItem.propTypes = {
   ratingComponent: pt.func.isRequired,
   isInStock: pt.bool.isRequired,
   discount: pt.number,
-  category: pt.string
+  category: pt.array
 };
 
 export default ProductItem;

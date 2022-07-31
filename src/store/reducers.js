@@ -1,13 +1,12 @@
-export function productsReducer(state = {}, action) {
+export function productsReducer(state = [], action) {
   switch (action.type) {
-    case 'ADD_PRODUCTS': {
-      return {
-        ...state,
-        products: action.payload,
-      }
+    case 'FILTER_PRODUCTS': {
+      return action.payload
+    }
+    default: {
+      return state
     }
   }
-  return state
 }
 
 export function filtersReducer(state = {}, action) {
@@ -15,30 +14,35 @@ export function filtersReducer(state = {}, action) {
     case 'ADD_CATEGORY': {
       return {
         ...state,
-        filters: {
-          ...state.filters,
-          categories: action.payload
+        categories: action.payload
+      }
+    }
+    case 'ADD_MIN_PRICE_FILTER': {
+      return {
+        ...state,
+        prices: {
+          ...state.prices,
+          min: action.payload
         }
       }
     }
-    case 'ADD_PRICE_FILTER': {
+    case 'ADD_MAX_PRICE_FILTER': {
       return {
         ...state,
-        filters: {
-          ...state.filters,
-          prices: action.payload
+        prices: {
+          ...state.prices,
+          max: action.payload
         }
       }
     }
     case 'ADD_DISCOUNT_FILTER': {
       return {
         ...state,
-        filters: {
-          ...state.filters,
-          discount: action.payload
-        }
+        discount: action.payload
       }
     }
+    default: {
+      return state
+    }
   }
-  return state
 }

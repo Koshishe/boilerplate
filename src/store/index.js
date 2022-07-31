@@ -1,8 +1,9 @@
 import { createStore, combineReducers } from 'redux'
 import { filtersReducer, productsReducer } from './reducers';
+import products from '../products.json'
 
-const initialState = {
-  products: [],
+export const initialState = {
+  productsFiltered: products,
   filters: {
     categories: [],
     prices: {
@@ -14,7 +15,7 @@ const initialState = {
 }
 
 const reducer = combineReducers({
-  products: productsReducer,
+  productsFiltered: productsReducer,
   filters: filtersReducer
 })
 

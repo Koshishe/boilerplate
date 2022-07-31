@@ -1,6 +1,7 @@
 import ProductItem from '../ProductItem/ProductItem';
 import React from 'react';
 import styles from './ProductList.module.css'
+import { connect } from 'react-redux';
 
 const ratingComponent = ({ isFilled }) => {
   return (
@@ -22,9 +23,15 @@ const ratingComponent = ({ isFilled }) => {
 
 const subPriceComponent = (content) => {
   return <span className={styles.subPrice}>{content}</span>;
-};
+}
 
-export function ProductList({products}) {
+const mapStateToProps = state => ({
+  productsFiltered: state.productsFiltered
+})
+
+export const ProductList = connect(mapStateToProps)((props) => {
+  const { productsFiltered } = props
+
   const parsePrice = (price) => {
     const priceStr = String(price)
     if (priceStr.length > 3) {
@@ -33,9 +40,10 @@ export function ProductList({products}) {
       return `${price} ₽`
     }
   }
+
   return (
     <ul className={styles.list}>
-      {products.map((item) =>
+      {productsFiltered.map((item) =>
         <ProductItem
           key={item.id}
           isInStock={item.isInStock}
@@ -52,4 +60,4 @@ export function ProductList({products}) {
       )}
     </ul>
   )
-}
+})

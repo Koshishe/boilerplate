@@ -1,49 +1,60 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import styles from './Filter.module.css'
 import Discount from '../Discount/Discount';
 import { Input } from '../UI/Input/Input';
 import { Categories } from '../Categories/Categories';
-import pt from 'prop-types';
+import { ProductContext } from '../index';
+import { connect } from 'react-redux';
+import {
+  addCategoryAction, addDiscountFilterAction, addMaxPriceFilterAction,
+  addMinPriceFilterAction,
+  filterProductsAction
+} from '../store/actions';
 
-export function Filter({getPrice, filterProducts, getCategories}) {
-  const [minValue, setMinValue] = useState(getPrice(true))
-  const [maxValue, setMaxValue] = useState(getPrice(false))
-  const [discount, setDiscount] = useState(0)
-  const [activeCategories, setActiveCategories] = useState([])
+const mapStateToProps = state => ({
+  filters: state.filters
+})
 
-  const toggleCategory = (category) => {
-    if (activeCategories.indexOf(category) !== -1) {
-      const newCategories = activeCategories.filter((item) => item !== category)
-      setActiveCategories(newCategories)
-      updateURL(newCategories.length ? newCategories.join(',') : '')
-    } else {
-      const newCategories = [...activeCategories, category]
-      setActiveCategories([...activeCategories, category])
-      updateURL(`${newCategories.join(',')}`)
-    }
+const mapDispatchToProps = dispatch => {
+  return {
+    filterProducts: (payload) => dispatch(filterProductsAction(payload)),
+    addCategory: (payload) => dispatch(addCategoryAction(payload)),
+    addMinPriceFilter: (payload) => dispatch(addMinPriceFilterAction(payload)),
+    addMaxPriceFilter: (payload) => dispatch(addMaxPriceFilterAction(payload)),
+    addDiscountFilter: (payload) => dispatch(addDiscountFilterAction(payload))
   }
+}
 
-  const  updateURL = (filter) => {
-    if (window.history.pushState) {
-      const baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname
-      const newUrl = `${baseUrl}${filter && `?filter=${filter}`}`
-      window.history.pushState(null, null, newUrl)
-    }
-    else {
-      console.warn('History API не поддерживается')
-    }
+export const Filter = connect(mapStateToProps, mapDispatchToProps)((props) => {
+  const { products } = useContext(ProductContext)
+  const { filters } = props
+  const { categories, prices, discount } = filters
+
+  const getPrice = (min) => {
+    const prices = products.map((item) => Number(item.price))
+    return min ? Math.min(...prices) : Math.max(...prices)
   }
 
   useEffect(() => {
     const urlCategories = window.location.search.replace('?filter=', '').split(',')
     if (urlCategories[0]) {
-      setActiveCategories(urlCategories)
+      props.addCategory(urlCategories)
     }
-  }, [])
+  }, [props])
 
   useEffect(() => {
-    filterProducts(minValue, maxValue, discount, activeCategories)
-  }, [minValue, maxValue, discount, activeCategories, filterProducts])
+    props.addMinPriceFilter(getPrice(true))
+    props.addMaxPriceFilter(getPrice())
+  }, [getPrice, props])
+
+  useEffect(() => {
+    props.filterProducts(products.filter((item) => {
+      return item.price >= prices.min &&
+        item.price <= prices.max &&
+        item.discount >= discount &&
+        (categories.length ? item.category.filter((item) => categories.indexOf(item) !== -1).length : true)
+    }))
+  }, [prices.min, prices.max, discount, categories, props, products])
 
   return (
     <div className={styles.filterWrapper}>
@@ -54,8 +65,8 @@ export function Filter({getPrice, filterProducts, getCategories}) {
             <Input
               name={'from'}
               type={'number'}
-              value={minValue}
-              onChange={setMinValue}
+              value={prices.min}
+              onChange={props.addMinPriceFilter}
               label={'от'}
             />
           </div>
@@ -63,8 +74,8 @@ export function Filter({getPrice, filterProducts, getCategories}) {
             <Input
               name={'to'}
               type={'number'}
-              value={maxValue}
-              onChange={setMaxValue}
+              value={prices.max}
+              onChange={props.addMaxPriceFilter}
               label={'до'}
             />
           </div>
@@ -74,15 +85,9 @@ export function Filter({getPrice, filterProducts, getCategories}) {
         title='Скидка'
         name="discount"
         value={discount}
-        onChange={setDiscount}
+        onChange={props.addDiscountFilter}
       />
-      <Categories items={getCategories()} activeCategories={activeCategories} toggleCategory={toggleCategory} />
+      <Categories />
     </div>
   )
-}
-
-Filter.propTypes = {
-  filterProducts: pt.number,
-  getPrice: pt.func,
-  getCategories: pt.func,
-};
+})
